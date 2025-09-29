@@ -12,6 +12,7 @@ from datetime import datetime
 from pathlib import Path
 import pandas as pd
 import xml.etree.ElementTree as ET
+import streamlit as st
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -21,6 +22,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
+
 
 
 class UplinkDownloader:
@@ -41,8 +43,15 @@ class UplinkDownloader:
         
         # Uplink credentials
         self.uplink_url = "https://uplinkdealers.com/dealers/login"
-        self.username = "CTJEnergy"
-        self.password = "CTJ2025"
+        # NEW (SECURE):
+	
+	try:
+    	self.username = st.secrets["UPLINK_USERNAME"]
+    	self.password = st.secrets["UPLINK_PASSWORD"]
+	except:
+    	# Fallback for local testing
+   	 self.username = os.getenv("UPLINK_USERNAME", "")
+    	self.password = os.getenv("UPLINK_PASSWORD", "")
     
     def convert_xml_to_excel(self, xml_file_path, excel_file_path):
         """Convert Microsoft Office XML Spreadsheet format to modern Excel"""
